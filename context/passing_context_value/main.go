@@ -1,19 +1,29 @@
 package main
 
-import "net/http"
+import (
+	"context"
+	"fmt"
+	"net/http"
+)
+
+type RequestID string
+
+const RequestIDKey RequestID = "request_id"
 
 func helloHandler(message string) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		_, err := w.Write([]byte(message))
-		if err != nil {
-			panic(err)
-		}
+		requestID := r.Context().Value(RequestIDKey)
+		fmt.Fprintf(w, "request[%s]: %s", requestID, message)
 	})
 }
 
 func helloMiddleware(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		// middleware logic
+		// extract request id
+		requestID := r.URL.Query().Get(string(RequestIDKey))
+		ctx := r.Context()
+		r = r.WithContext(context.WithValue(ctx, RequestIDKey, requestID))
 		next.ServeHTTP(w, r)
 	})
 }
