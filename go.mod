@@ -6,6 +6,7 @@ require (
 	github.com/go-redis/redis/v8 v8.11.5
 	github.com/gomodule/redigo v1.8.9
 	github.com/nitishm/go-rejson/v4 v4.1.0
+	github.com/rabbitmq/amqp091-go v1.5.0
 )
 
 require (
